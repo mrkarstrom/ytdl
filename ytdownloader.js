@@ -27,6 +27,25 @@ async function main() {
       console.log('Failed to download audio.');
       return;
     }
+
+    try {
+      console.log('Downloading video...');
+      await new Promise((resolve, reject) => {
+        ytdl(link, { quality, filter: 'videoonly' })
+          .on('progress', (_, downloaded, total) => {
+            const progress = (downloaded / total) * 100;
+            console.log(`${progress} % completed`);
+          })
+          .on('end', () => {
+            resolve();
+          })
+          .on('error', () => reject())
+          .pipe(fs.createWriteStream('video.mp4'));
+      });
+    } catch {
+      console.log('Failed to download video');
+      return;
+    }
   }
 }
 
