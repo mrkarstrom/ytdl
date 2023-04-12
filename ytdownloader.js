@@ -46,6 +46,35 @@ async function main() {
       console.log('Failed to download video');
       return;
     }
+    console.log('Merging audio and video');
+    let title;
+    try {
+      title = (await ytdl.getInfo(link)).videoDetails.title;
+    } catch {
+      console.log('Failed to get video title');
+      return;
+    }
+    try {
+      execSync(
+        `${ffmpegPath} -i  video.mp4 -i video.mp3 -c:v copy -c:a aac ${title.replace(
+          /[^a-zA-Z0-9]/g,
+          ''
+        )}.mp4`
+      );
+    } catch {
+      console.log('Could not merge video and audio');
+      return;
+    }
+    console.log('Merge complete!');
+
+    try {
+      fs.unlinkSync('video.mp3');
+      fs.unlinkSync('video.mp4');
+    } catch {
+      console.log(
+        'Unable to delete leftover audio and video files after merging.'
+      );
+    }
   }
 }
 
