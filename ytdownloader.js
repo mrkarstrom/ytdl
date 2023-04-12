@@ -18,7 +18,7 @@ async function main() {
             console.log(`${progress.toFixed()} % completed`);
           })
           .on('end', () => {
-            reseolve();
+            resolve();
           })
           .on('error', () => reject())
           .pipe(fs.createWriteStream('video.mp3'));
